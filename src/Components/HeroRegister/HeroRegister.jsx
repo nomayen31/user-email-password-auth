@@ -1,23 +1,43 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import auth from "../../Firebase/firebase.config";
+import { useState } from "react";
 
 
 
 const HeroRegister = () => {
+  const [heroError, setHeroError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false)
   const handleRegister = (e) => {
     e.preventDefault()
     console.log('form submit');
     const email = e.target.email.value;
     const password = e.target.password.value;
     console.log(email, password);
-    createUserWithEmailAndPassword(auth, email,password)
-    .then(result =>{
-      console.log(result);
-      // const user = result.user;
-    })
-    .catch(error =>{
-      console.error(error)
-    })
+    if (password.length < 6) {
+      setHeroError('Password should be al least 6 characters or longer')
+      return;
+    }
+    else if (!/[A-Z]/.test(password)) {
+      setHeroError('your password should be a one  UpperCase character')
+      return;
+    }
+    setHeroError('')
+    setSuccess('')
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(result => {
+        console.log(result);
+        setSuccess('user Created successfully')
+
+        // const user = result.user;
+      })
+      .catch(error => {
+        console.error(error)
+        setHeroError(error.message)
+      })
   }
   return (
     <div>
@@ -39,7 +59,19 @@ const HeroRegister = () => {
                 <label className="label">
                   <span className="label-text">Password</span>
                 </label>
-                <input type="password" name='password' placeholder="password" className="input input-bordered" required />
+                <input
+                  type={showPassword ? 'text' : "password"}
+                  name='password'
+                  placeholder="password"
+                  className="input input-bordered"
+                  required />
+                {/* <span  onClick={()=>setShowPassword(!showPassword)}>Show Password</span> */}
+                <div className="">
+                  {
+                  showPassword ? <FaEyeSlash onClick={()=>setShowPassword(!showPassword)} /> :<FaEye  onClick={()=>setShowPassword(!showPassword)}/>
+                }
+                </div>
+
                 <label className="label">
                   <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                 </label>
@@ -49,6 +81,16 @@ const HeroRegister = () => {
               </div>
             </form>
           </div>
+          {
+            heroError
+            &&
+            <p className="text-red-600">{heroError}</p>
+          }
+
+          {
+            success &&
+            <p className="text-green-600">{success}</p>
+          }
         </div>
       </div>
     </div>
