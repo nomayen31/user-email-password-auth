@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../App.css'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from '../../Firebase/firebase.config';
 
 const Login = () => {
+    
     const handleRegister = (e) => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log(email,password);
+
+
         createUserWithEmailAndPassword(auth, email,password)
         .then(result =>{
             console.log(result.user);
         })
         .catch(error=>{
             console.log(error.message);
+            
         })
 
     }
@@ -30,6 +34,7 @@ const Login = () => {
                     <input className='btn btn-secondary w-3/4 mb-4' type="submit" value="Register" />
                 </form>
             </div>
+           
         </div>
     );
 };
